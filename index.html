@@ -51,6 +51,20 @@
     100% { background-position: 0% 50%; }
 }
 
+.toast-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  z-index: 1000;
+  animation: fadeInOut 3s forwards;
+}
+
 /* The central content box */
 .loading-box {
     text-align: center;
@@ -908,14 +922,15 @@ function displayClickwrap() {
   }
 
   const showToast = (msg = "Success!") => {
-  const toast = document.createElement("div");
-  toast.classList.add("toast-message");
-  toast.innerText = msg;
-  document.body.appendChild(toast);
-  
-  // Remove after 3 seconds 
-  setTimeout(() => { toast.remove(); document.getElementById('sign-in-card').style.display = "none";}, 3000);
+      const toast = document.createElement("div");
+      toast.classList.add("toast-message");
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      
+      // Remove after 3 seconds 
+      setTimeout(() => { toast.remove(); document.getElementById('sign-in-card').style.display = "none";}, 3000);
    };
+
    showToast("Success!");
 
   return;

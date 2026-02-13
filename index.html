@@ -763,6 +763,18 @@ function handleCWMessage(message) {
         type: "send_acceptance",
         workflowTemplateId: WORKFLOW_TEMPLATE_ID,
       });
+
+      const showToast = (msg = "Success!") => {
+      const toast = document.createElement("div");
+      toast.classList.add("toast-message");
+      toast.innerText = msg;
+      document.body.appendChild(toast);
+      
+      // Remove after 3 seconds 
+      setTimeout(() => { toast.remove(); document.getElementById('sign-in-card').style.display = "none";}, 3000);
+      };
+      showToast("Success!");
+
       break;
     case 'clickwrap_checkbox_unchecked':
       // The user has previously checked the checkbox for acceptance,

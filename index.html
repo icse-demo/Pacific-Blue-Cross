@@ -241,6 +241,20 @@
   <style>
     .unruly-new-design-wrapper[_ngcontent-ng-c459825792] {
         background-image: url('./pacific_blue_cross.png') !important;
+
+        /* 2. Make it repeat */
+        background-repeat: repeat !important;
+      
+        /* 3. Set a specific size for the logo so it tiles nicely */
+        /* Adjust '300px' up or down depending on how big you want the logos */
+        background-size: 300px auto !important;
+      
+        /* 4. Ensure the background stays fixed when scrolling (optional, but looks better) */
+        background-attachment: fixed;
+      
+        /* 5. Ensure the container covers the full screen */
+        min-height: 100vh;
+        width: 100%;
     }
   </style>
 }

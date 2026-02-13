@@ -555,51 +555,11 @@ nz-card[_ngcontent-ng-c459825792] .ant-card-body nz-input-group{
       </app-root>
    </body>
    <script>
-/* Constants according to specific Ironclad environment */
 const CLICKWRAP_IFRAME_ORIGIN = 'https://demo.ironcladapp.com';
+
 const WORKFLOW_TEMPLATE_ID = '698e55239f0b9d55d4bffdf0';
 
-
-/* Track whether the terms have been accepted */
 var CLICKWRAP_ACCEPTED = false;
-
-/* Get URL hash params */
-const urlParams = new URLSearchParams(window.location.hash.substring(1));
-const dataValue = urlParams.get('data');
-const selectElement = document.getElementById('data-vendor');
-if (dataValue) {
-    selectElement.value = dataValue;
-}
-var DATA_VENDOR = document.getElementById("data-vendor").value;
-selectElement.addEventListener('change', function() {
-    DATA_VENDOR = document.getElementById("data-vendor").value;
-      sendIframeMessage({
-          type: 'set_data',
-          data: {
-              formValues: { products: [{ columnQuantity: 1, columnName: 'Product 1', columnPrice: { amount: 1000, currency: 'USD' } }], },
-              styles: CLICKWRAP_STYLES,
-          },
-          workflowTemplateId: WORKFLOW_TEMPLATE_ID
-      });
-});
-
-/* Preferred fonts, colors, styles for Ironclad (for full options, refer to documentation) */
-const CLICKWRAP_STYLES = {
-    acceptanceLanguageText: {
-      fontSize: "12px",
-      fontFamily: {
-        type: "google",
-        fontFamilyName: "Open Sans",
-      },
-    },
-    documentLink: {
-      fontFamily: {
-        type: "google",
-        fontFamilyName: "Open Sans",
-      },
-      fontSize: "12px"
-    },
-}
 
 function sendIframeMessage(messageData) {
   const iframeInPage = document.getElementById('my-iframe');
@@ -617,17 +577,47 @@ function handleCWMessage(message) {
 
   switch (message.data.type) {
     case 'clickwrap_initialized':
-      /* once initialized, we can set_data with default values to present checkbox */
+      // loaded, can now set data
       console.log("initialized");
       sendIframeMessage({
           type: 'set_data',
           data: {
-              formValues: { products: [{ columnQuantity: 1, columnName: 'Product 1', columnPrice: { amount: 1000, currency: 'USD' } }], },
-              styles: CLICKWRAP_STYLES,
+              formValues: {
+                  counterpartyName: 'Example Counterparty',
+              },
+      styles: {
+        //checkbox: {
+        //  uncheckedBorderColor: "#007490",
+        //  uncheckedBackgroundColor: "#F8F8F7",
+        //  checkedBackgroundColor: "#00A66F",
+        //  checkmarkColor: "lavender",
+        //},
+        backgroundColor: "transparent", // default value - shown for structure
+        acceptanceLanguageText: {
+          fontSize: "12px",
+          //color: "#00a66f",
+          //fontWeight: "500",
+          fontFamily: {
+            type: "google",
+            fontFamilyName: "Open Sans",
           },
+          fontStyle: "normal", // default value - shown for structure
+          textDecoration: undefined, // default value - shown for structure
+        },
+        documentLink: {
+          //color: "#006c47",
+          //fontWeight: "600",
+          fontFamily: {
+            type: "google",
+            fontFamilyName: "Open Sans",
+          },
+          fontStyle: "normal", // default value - shown for structure
+          fontSize: "12px" // value inherited from acceptanceLanguageText.fontSize - shown for structure
+        },
+      },
+      },
           workflowTemplateId: WORKFLOW_TEMPLATE_ID
       });
-      document.getElementById('sign-in-card').style.display = "block"; 
       break;
     case 'clickwrap_is_loading':
       // data has been set, clickwrap is loading within iframe
@@ -636,7 +626,6 @@ function handleCWMessage(message) {
     case 'clickwrap_load_succeeded':
       // clickwrap is loaded and is now interactable
       console.log("load succeeded");
-      document.getElementById('sign-in-card').style.display = "block"; 
       break;
     case 'clickwrap_load_failed':
       // clickwrap loading failed, check data and try setting data again
@@ -655,6 +644,10 @@ function handleCWMessage(message) {
       // It is now permissable to post the `send_acceptance` event to the iframe.
       console.log("checkbox checked");
       CLICKWRAP_ACCEPTED = true;
+      sendIframeMessage({
+        type: "send_acceptance",
+        workflowTemplateId: WORKFLOW_TEMPLATE_ID,
+      });
       break;
     case 'clickwrap_checkbox_unchecked':
       // The user has previously checked the checkbox for acceptance,
@@ -665,7 +658,7 @@ function handleCWMessage(message) {
       CLICKWRAP_ACCEPTED = false;
       console.log("checkbox unchecked");
       break;
-    case 'clickwrap_acceptance_succeeded':
+    case 'clickwrap_acceptance_succceeded':
       // The acceptance has been successfully sent and recorded.
       console.log("acceptance succeeded");
       break;
@@ -781,16 +774,15 @@ iframe.addEventListener("load", () => {
         }
 
 function displayClickwrap() {
+  console.log("hello");
   var EMAIL_ADDRESS = document.getElementById("email-address").value.trim();
   var PASSWORD = document.getElementById('password').value.trim();
-  DATA_VENDOR = document.getElementById("data-vendor").value;
+  var DATA_VENDOR = document.getElementById("data-vendor").value;
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  if (!DATA_VENDOR || !PASSWORD || !EMAIL_ADDRESS || !validateEmail(EMAIL_ADDRESS)) {
+  if (!DATA_VENDOR || !PASSWORD || !EMAIL_ADDRESS) {
     alert("Please fill in all required fields");
     
-    if (!EMAIL_ADDRESS || !validateEmail(EMAIL_ADDRESS)) document.getElementById("email-address").focus();
+    if (!EMAIL_ADDRESS) document.getElementById("email-address").focus();
     else if (!PASSWORD) document.getElementById('password').focus();
     else if (!DATA_VENDOR) document.getElementById("data-vendor").focus();
 
@@ -803,44 +795,10 @@ function displayClickwrap() {
     return;
   }
 
-  sendIframeMessage({
-      type: 'set_data',
-      data: {
-          formValues: {
-            counterpartyName: EMAIL_ADDRESS,
-            counterpartySignerName: EMAIL_ADDRESS,
-            counterpartySignerEmail: EMAIL_ADDRESS,
-            products: [{ columnQuantity: 1, columnName: 'Product 1', columnPrice: { amount: 1000, currency: 'USD' } }],
-          },
-          styles: CLICKWRAP_STYLES,
-      },
-      workflowTemplateId: WORKFLOW_TEMPLATE_ID
-  });
-
-    sendIframeMessage({
-      type: "send_acceptance",
-      workflowTemplateId: WORKFLOW_TEMPLATE_ID,
-    });
-
-const showToast = (msg = "Success!") => {
-  const toast = document.createElement("div");
-  toast.classList.add("toast-message");
-  toast.innerText = msg;
-  document.body.appendChild(toast);
-  
-  // Remove after 3 seconds 
-  setTimeout(() => { toast.remove(); document.getElementById('sign-in-card').style.display = "none";}, 3000);
-};
-showToast("Success!");
-
-  return;
-  /* Other functionality to ignore */
-  
   const elementsToRemove = document.querySelectorAll('.ant-card-body');
   elementsToRemove.forEach(function(element) {
     element.remove();
   });
-
     const signatureIframe = document.getElementById('signature-iframe');
         if (signatureIframe) {
             signatureIframe.addEventListener("load", () => {
@@ -893,10 +851,10 @@ showToast("Success!");
             },
             body: JSON.stringify({
                 attributes: {
+                    dataVendor: DATA_VENDOR,
                     role699edbec23d5480b9012b2e42872ddc6: "Jason Test",
                     role32f73a669e5e42a3923d4d6c5d8bd12e: EMAIL_ADDRESS,
                     counterpartyName: "Jason Test",
-                    products: [{ quantity: 1, name: 'Product 1', price: { amount: 1000, currency: 'USD' } }],
                 },
                 user: "jason.brown@ironcladhq.com",
                 templateId: "693858cdc16bd0393afebab1",

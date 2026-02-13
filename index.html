@@ -685,9 +685,7 @@ function handleCWMessage(message) {
       sendIframeMessage({
           type: 'set_data',
           data: {
-              formValues: {
-                  counterpartyName: 'Example Counterparty',
-              },
+              formValues: {},
       styles: {
         //checkbox: {
         //  uncheckedBorderColor: "#007490",
@@ -877,7 +875,6 @@ iframe.addEventListener("load", () => {
         }
 
 function displayClickwrap() {
-  console.log("hello");
   var EMAIL_ADDRESS = document.getElementById("email-address").value.trim();
   var PASSWORD = document.getElementById('password').value.trim();
 
@@ -952,12 +949,12 @@ function displayClickwrap() {
             },
             body: JSON.stringify({
                 attributes: {
-                    companyName: "Brandon Test",
                     counterpartySignerEmail: "brandon.to@ironcladhq.com",
                     counterpartySignerName: "Brandon Test",
+                    effectiveDate: "05/05/2026"
                 },
                 user: "brandon.to@ironcladhq.com",
-                templateId: "693858cdc16bd0393afebab1",
+                templateId: "698e55239f0b9d55d4bffdf0",
                 frameAncestor: "https://icse-demo.github.io/", // leave this as is
                 roleName: "Counterparty Signer",
                 clientId: "b07eab6b-bd50-4027-975f-bcb3bb4d762d",
